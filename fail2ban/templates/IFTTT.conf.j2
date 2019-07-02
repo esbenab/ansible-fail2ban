@@ -1,0 +1,11 @@
+[Definition]
+
+actioncheck =
+actionstart =
+actionstop =
+actionban = /bin/bash /etc/fail2ban/IFTTT_notify.sh "Banned _country_  in the jail  after {{ maxretry }} attempts" <ip> > /dev/null 2>&1
+actionunban = /bin/bash /etc/fail2ban/IFTTT_notify.sh "Unbanned _country_  in the jail " <ip> > /dev/null 2>&1
+
+# Default name of the chain
+#
+name = default

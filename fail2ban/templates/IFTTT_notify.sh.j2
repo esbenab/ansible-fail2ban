@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# message first command argument
+MESSAGE=$1
+HOOK_URL={{ hook_url }}
+TOKEN={{ token }}
+HOST=$(hostname)
+
+
+# ip second command argument
+IP=$2
+# lets find out from what country we have our hacker
+JSON=$(curl ipinfo.io/${IP})
+COUNTRY=$(echo $JSON | python -c "import sys, json; print(json.load(sys.stdin)['country'])")
+# converting country to lower case.
+COUNTRY=$(echo "$COUNTRY" | tr -s  '[:upper:]'  '[:lower:]')
+REGION=$(echo $JSON | python -c "import sys, json; print(json.load(sys.stdin)['region'])")
+CITY=$(echo $JSON | python -c "import sys, json; print(json.load(sys.stdin)['city'])")
+LOC=$(echo $JSON | python -c "import sys, json; print(json.load(sys.stdin)['loc'])")
+REGION_INFO="${CITY}, ${REGION}, ${COUNTRY}"
+
+# replace _country_ template to the country emoji
+MESSAGE="${MESSAGE/_country_/$REGION_INFO}"
+
+curl -X POST  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "{\"value1\":\"fail2ban 👮 alert\",\"value2\":\"https://www.google.com/maps/search/?api=1&query=${LOC}&zoom=8\", \"value3\": \"[${IP}] ${MESSAGE}\"}" ${HOOK_URL}
+
+exit 0

@@ -1,0 +1,65 @@
+---
+- name: Install fail2ban on Red Hat system
+  yum:
+    name: ['fail2ban', 'fail2ban-systemd']
+    state: latest
+  with_items:
+    - fail2ban
+    - fail2ban-systemd
+  when: ansible_os_family == "RedHat"
+
+- name: Copy IFTTT_notify.sh.j2 to /etc/fail2ban/IFTTT_notify.sh
+  template:
+    src: IFTTT_notify.sh.j2
+    dest: /etc/fail2ban/IFTTT_notify.sh
+    mode: 0755
+    owner: root
+    group: root
+  notify:
+    - restart fail2ban
+
+- name: Copy fail2ban.local.j2 to /etc/fail2ban/fail2ban.local
+  template:
+    src: fail2ban.local.j2
+    dest: /etc/fail2ban/fail2ban.local
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - restart fail2ban
+
+- name: Copy jail.local.j2 to /etc/fail2ban/jail.local
+  template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - restart fail2ban
+
+- name: Copy iptables-multiport.conf.j2 to /etc/fail2ban/action.d/iptables-multiport.conf
+  template:
+    src: iptables-multiport.conf.j2
+    dest: /etc/fail2ban/action.d/iptables-multiport.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - restart fail2ban
+
+- name: Copy IFTTT.conf.j2 to /etc/fail2ban/action.d/IFTTT.conf
+  template:
+    src: IFTTT.conf.j2
+    dest: /etc/fail2ban/action.d/IFTTT.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - restart fail2ban
+
+- name: Enable fail2ban service
+  systemd:
+    name: fail2ban
+    enabled: yes
+    state: started

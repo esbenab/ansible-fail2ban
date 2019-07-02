@@ -1,0 +1,51 @@
+# Fail2Ban configuration file
+#
+# Author: Cyril Jaquier
+# Modified by Yaroslav Halchenko for multiport banning
+#
+
+[INCLUDES]
+
+before = iptables-common.conf
+
+[Definition]
+
+# Option:  actionstart
+# Notes.:  command executed once at the start of Fail2Ban.
+# Values:  CMD
+#
+actionstart =  -N f2b-
+               -A f2b- -j 
+               -I  -p  -m multiport --dports  -j f2b-
+
+# Option:  actionstop
+# Notes.:  command executed once at the end of Fail2Ban
+# Values:  CMD
+#
+actionstop =  -D  -p  -m multiport --dports  -j f2b-
+              -F f2b-
+              -X f2b-
+
+# Option:  actioncheck
+# Notes.:  command executed once before each actionban command
+# Values:  CMD
+#
+actioncheck =  -n -L  | grep -q 'f2b-[ \t]'
+
+# Option:  actionban
+# Notes.:  command executed when banning an IP. Take care that the
+#          command is executed with Fail2Ban user rights.
+# Tags:    See jail.conf(5) man page
+# Values:  CMD
+#
+actionban =  -I f2b- 1 -s  -j 
+
+# Option:  actionunban
+# Notes.:  command executed when unbanning an IP. Take care that the
+#          command is executed with Fail2Ban user rights.
+# Tags:    See jail.conf(5) man page
+# Values:  CMD
+#
+actionunban =  -D f2b- -s  -j 
+
+[Init]
