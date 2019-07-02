@@ -3,9 +3,9 @@
   yum:
     name: ['fail2ban', 'fail2ban-systemd']
     state: latest
-  with_items:
-    - fail2ban
-    - fail2ban-systemd
+    #  with_items:
+    #- fail2ban
+    #- fail2ban-systemd
   when: ansible_os_family == "RedHat"
 
 - name: Copy IFTTT_notify.sh.j2 to /etc/fail2ban/IFTTT_notify.sh
@@ -58,7 +58,7 @@
   notify:
     - restart fail2ban
 
-- name: Enable fail2ban service
+- name: Enable fail2ban service and ensure it's started
   systemd:
     name: fail2ban
     enabled: yes
