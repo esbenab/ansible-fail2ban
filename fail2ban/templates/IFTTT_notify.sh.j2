@@ -11,12 +11,12 @@ HOST=$(hostname)
 IP=$2
 # lets find out from what country we have our hacker
 JSON=$(curl ipinfo.io/${IP})
-COUNTRY=$(echo $JSON | python -c "import sys, json; print(json.load(sys.stdin)['country'])")
+COUNTRY=$(echo $JSON | fail2ban-python -c "import sys, json; print(json.load(sys.stdin)['country'])")
 # converting country to lower case.
 COUNTRY=$(echo "$COUNTRY" | tr -s  '[:upper:]'  '[:lower:]')
-REGION=$(echo $JSON | python -c "import sys, json; print(json.load(sys.stdin)['region'])")
-CITY=$(echo $JSON | python -c "import sys, json; print(json.load(sys.stdin)['city'])")
-LOC=$(echo $JSON | python -c "import sys, json; print(json.load(sys.stdin)['loc'])")
+REGION=$(echo $JSON | fail2ban-python -c "import sys, json; print(json.load(sys.stdin)['region'])")
+CITY=$(echo $JSON | fail2ban-python -c "import sys, json; print(json.load(sys.stdin)['city'])")
+LOC=$(echo $JSON | fail2ban-python -c "import sys, json; print(json.load(sys.stdin)['loc'])")
 REGION_INFO="${CITY}, ${REGION}, ${COUNTRY}"
 
 # replace _country_ template to the country emoji
